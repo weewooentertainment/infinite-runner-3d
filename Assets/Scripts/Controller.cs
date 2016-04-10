@@ -25,7 +25,12 @@ public class Controller : MonoBehaviour {
 	private float speedIncrement = 0.1f;
 	private Transform CenterPoints;
 
+	private int prefab_P = 0;
+	private const string cP = "P";
+	private const int stepsNeeded = 2;
+
 	void Start () {
+		prefab_P = GameObject.Find ("Points").transform.childCount;
 		CreateNewRoad();
 	}
 
@@ -47,16 +52,18 @@ public class Controller : MonoBehaviour {
 				CurrentRoadId--;
 			}
 			
-			CurrentRoads.Add(Instantiate (Road, Cpoints[LevelCount * 19 + LevelCount - 1].position, 
+			CurrentRoads.Add(Instantiate (Road, Cpoints[LevelCount * prefab_P + LevelCount - 1].position, 
 			                                Quaternion.identity) as GameObject);
 		}
 		else
 			CurrentRoads.Add(Instantiate (Road, Vector3.zero, Quaternion.identity) as GameObject);
 
 		CenterPoints = CurrentRoads[CurrentRoadId].transform.FindChild("Plane").FindChild("Points");
-		for (int i = 1; i < 21; i++) 
+
+		int boundary = prefab_P + stepsNeeded;
+		for (int i = 1; i < boundary; i++) 
 		{
-			Transform childPoint = CenterPoints.transform.FindChild("P" + i);
+			Transform childPoint = CenterPoints.transform.FindChild(cP + i);
 			Cpoints.Add(childPoint);
 
 			int typeNum = Random.Range(0,  materials.Count);
@@ -89,6 +96,23 @@ public class Controller : MonoBehaviour {
 
 
 	}
+		
+	/// <summary>
+	///   A check to determine if we need to create a new Prefab road object.
+	///   The check is a stupid string comparison using the stupid naming convention
+	/// </summary>
+	/// <returns><c>true</c>, if a new road is needed, <c>false</c> otherwise.</returns>
+	bool needNewRoad(){
+		bool rt = false;
+
+		string target = cP + (prefab_P - stepsNeeded);
+
+		if (Cpoints [CurrentPoint].name == target) {
+			rt = true;
+		}
+
+		return rt;
+	}
 	
 	void Update () {
 		Vector3 startPoint = new Vector3 (Cpoints [CurrentPoint].position.x + distance, 
@@ -107,7 +131,7 @@ public class Controller : MonoBehaviour {
 			time = 0;
 			CurrentPoint++;
 			
-			if(Cpoints [CurrentPoint].name == "P17")
+		if(needNewRoad())
 			{
 				CurrentRoadId++;
 				LevelCount++;
