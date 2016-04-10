@@ -19,7 +19,10 @@ public class Controller : MonoBehaviour {
 	private int LevelCount = 0;
 	private float time = 0;
 	private float distance = 0, nextDistance = 0;
+	private float minSpeed = 1.0f;
 	private float speed = 1.5f;
+	private float maxSpeed = 3.0f;
+	private float speedIncrement = 0.1f;
 	private Transform CenterPoints;
 
 	void Start () {
@@ -114,21 +117,23 @@ public class Controller : MonoBehaviour {
 		}
 		
 		
-		if(Input.GetKeyDown(KeyCode.LeftArrow))
-		{
-			if(positionNum != -1)
-			{
+		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+			if (positionNum != -1) {
 				positionNum--;
 				nextDistance = 1.0f * positionNum;
 			}
-		}
-		
-		else if(Input.GetKeyDown(KeyCode.RightArrow))
-		{
-			if(positionNum != 1)
-			{
+		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
+			if (positionNum != 1) {
 				positionNum++;
-				nextDistance = 1.0f  * positionNum;
+				nextDistance = 1.0f * positionNum;
+			}
+		} else if (Input.GetKeyDown (KeyCode.UpArrow)) {
+			if (speed <= maxSpeed) {
+				speed += speedIncrement;
+			}
+		} else if (Input.GetKeyDown (KeyCode.DownArrow)) {
+			if (speed >= minSpeed) {
+				speed -= speedIncrement;
 			}
 		}
 		
